@@ -18,7 +18,7 @@ export class AuthService {
 	) {}
 
 	private static issueToken(userId: string): string {
-		return jsonwebtoken.sign({ uid: userId }, process.env.SECRET, {
+		return jsonwebtoken.sign({ uid: userId }, process.env.SECRET || '1234', {
 			expiresIn: "100day",
 		});
 	}
@@ -30,7 +30,7 @@ export class AuthService {
 			.digest("hex");
 	}
 
-	public async findUserByJwt(payload: JwtPayload): Promise<User> {
+	public async findUserByJwt(payload: JwtPayload): Promise<User | null> {
 		return this._user.findById(payload.uid || "");
 	}
 

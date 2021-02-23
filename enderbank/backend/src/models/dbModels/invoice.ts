@@ -5,6 +5,9 @@ import { InvoiceDto } from "../dto/invoice.dto";
 import { refToId } from "../../helpers/refToId";
 
 export class Invoice extends BaseEntity {
+	@prop({ required: false })
+	canceled?: boolean;
+
 	@prop({ required: true })
 	amount: number;
 
@@ -17,13 +20,13 @@ export class Invoice extends BaseEntity {
 	@prop({ required: false })
 	expiresAt?: Date;
 
-	public toDto(): InvoiceDto {
+	public static toDto(inv: Invoice): InvoiceDto {
 		return {
-			_id: this._id.toHexString(),
-			amount: this.amount,
-			code: this.code,
-			paidBy: refToId(this.paidBy),
-			expiresAt: this.expiresAt,
+			_id: inv._id.toHexString(),
+			amount: inv.amount,
+			code: inv.code,
+			paidBy: refToId(inv.paidBy),
+			expiresAt: inv.expiresAt,
 		};
 	}
 }

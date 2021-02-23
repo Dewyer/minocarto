@@ -5,6 +5,10 @@ import { InvoiceDto } from "../models/dto/invoice.dto";
 import { CreateInvoiceResponse } from "../models/http/response/createInvoiceResponse";
 import { CreateInvoiceRequest } from "../models/http/request/createInvoiceRequest";
 import { JwtAuthGuard } from "src/auth/guard";
+import {QueryInvoiceRequest} from "../models/http/request/queryInvoiceRequest";
+import {QueryInvoiceResponse} from "../models/http/response/queryInvoiceResponse";
+import {PayInvoiceRequest} from "../models/http/request/payInvoiceRequest";
+import {ActionResponse} from "../models/http/response/actionResponse";
 
 @Controller("api/invoices")
 export class InvoicesController {
@@ -25,5 +29,22 @@ export class InvoicesController {
 		@Req() userReq: AuthenticatedRequest,
 	): Promise<CreateInvoiceResponse> {
 		return this.invoicesService.createInvoice(request, userReq.user);
+	}
+
+	@Post("query")
+	@UseGuards(JwtAuthGuard)
+	async queryInvoice(
+		@Body() request: QueryInvoiceRequest,
+	): Promise<QueryInvoiceResponse> {
+		return this.invoicesService.queryInvoice(request);
+	}
+
+	@Post("pay")
+	@UseGuards(JwtAuthGuard)
+	async payInvoice(
+		@Body() request: PayInvoiceRequest,
+		@Req() userReq: AuthenticatedRequest,
+	): Promise<ActionResponse> {
+		return this.invoicesService.payInvoice(request, userReq.user);
 	}
 }

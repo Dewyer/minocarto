@@ -7,7 +7,7 @@ import { InvoicesModule } from "../invoices/invoices.module";
 
 @Module({
 	imports: [
-		TypegooseModule.forRoot(process.env.DB_CONN, {
+		TypegooseModule.forRoot(process.env.DB_CONN || '', {
 			useNewUrlParser: true,
 		}),
 		AuthModule,
