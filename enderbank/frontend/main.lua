@@ -40,10 +40,21 @@ Api = {
         return self.url..path;
     end,
 
-    post = function (self, path, authed, body)
-        local resp, errorReason = http.post({ url=self:getUrl(path), headers=self:getHeaders(authed), body=textutils.serializeJSON(body)});
+    request = function (self, path, authed, body, isPost=true)
+        local inp = { url=self:getUrl(path), headers=self:getHeaders(authed) };
+        if body then
+            inp.body=textutils.serializeJSON(body);
+        end
+        local resp, errorReason = nil, nil;
+        if isPost then
+            resp, errorReason = http.post(inp);
+        else
+            resp, errorReason = http.get(inp);
+        end
+
         if errorReason then
-            print("post failed "..errorReason);
+            print("[Post failed]"..errorReason);
+            return nil;
         end
 
         local respJson = textutils.unserializeJSON(resp.readAll());
@@ -73,18 +84,22 @@ Api = {
         return true;
     end,
 
-    register = function (self, username, password)
-        local resp = self:post("api/auth/register", false, {
+    auth = function (self, username, password, mode)
+        local resp = self:request("api/auth/"..mode, false, {
             userName=username,
             password=password
         });
 
-        if resp.statusCode then
+        if not resp or resp.statusCode then
             return false;
         end
 
         self:saveToken(resp.token);
         return true;
+    end
+
+    getInvoices = function (self)
+        return self:request("api/invoices", true, nil, false);
     end
 };
 
@@ -96,18 +111,32 @@ function registerFlow()
     print("- Password:");
     local pwd = read("*");
 
-    local didReg = Api:register(username, pwd);
+    local didReg = Api:auth(username, pwd, "register");
     if not didReg then
         print("We couldn't register you, please try again.");
         registerFlow();
     else
-        print("wuuh");
-        print(Api.token);
+        print("=========");
+        print("Succesfully registered.");
     end
 end
 
 function loginFlow()
-    print("Unimplemented!");
+    print("=========");
+    print("Logging in user");
+    print("- Username:");
+    local username = read();
+    print("- Password:");
+    local pwd = read("*");
+
+    local didReg = Api:auth(username, pwd, "login");
+    if not didReg then
+        print("We couldn't log you in, please try again.");
+        registerFlow();
+    else
+        print("=========");
+        print("Succesfully logged in.");
+    end
 end
 
 function unathorizedFlow()
@@ -120,14 +149,43 @@ function unathorizedFlow()
     end
 end
 
+function listInvoices()
+    local invoices = Api:getInvoices();
+    if not invoices then
+        print("Couldn't list invoices.");
+        return;
+    end
+
+    print("Open invoices: ");
+    for kk, vv in pairs(invoices) do
+        print(kk.." - "..vv.amount.."$".." ,code:"..vv.code);
+    end
+end
+
+function mainOperations()
+    print("^^ Welcome back! ^^");
+    while true do
+        print("");
+        local cmd = Ui.askQuestion(">-", {"List my invoices", "Create an invoice", "Pay an invoice", "Get my balance", "Quit"});
+        if cmd == 1 then
+            listInvoices();
+        end
+        if cmd == 5 then
+            break;
+        end
+    end
+end
+
 function main()
     print("Dankyer LLC Bank wallet-app V 0.0");
-    local loadedToken = Api.loadToken();
+    local loadedToken = Api:loadToken();
     if loadedToken then
-        print("Welcome back!");
+        mainOperations();
     else
         unathorizedFlow();
     end
+
+    print("Good bye! ...");
 end
 
 main();
