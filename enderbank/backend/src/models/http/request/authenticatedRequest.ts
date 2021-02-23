@@ -1,5 +1,5 @@
-import {User} from "../../db/user";
+import { User } from "../../dbModels/user";
 
 export interface AuthenticatedRequest {
-	user: User,
+	user: User;
 }

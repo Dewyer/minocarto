@@ -1,3 +1,3 @@
 export interface AuthorizingResponse {
-  token: string,
+	token: string;
 }

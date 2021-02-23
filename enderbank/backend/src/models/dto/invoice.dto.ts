@@ -1,6 +1,6 @@
-import {BaseEntityDto} from "./baseEntity.dto";
+import { BaseEntityDto } from "./baseEntity.dto";
 
-export interface InvoiceDto extends BaseEntityDto{
+export interface InvoiceDto extends BaseEntityDto {
 	amount: number;
 
 	code: string;

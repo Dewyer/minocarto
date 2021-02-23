@@ -1,18 +1,19 @@
-import {Body, Controller, Get, Post, Req, UseGuards} from '@nestjs/common';
-import {AuthService} from "./auth.service";
-import {AuthorizingResponse} from "../models/http/response/authorizingResponse";
-import {RegisterRequest} from "../models/http/request/registerRequest";
-import {LoginRequest} from "../models/http/request/loginRequest";
-import {AuthenticatedRequest} from "../models/http/request/authenticatedRequest";
-import {JwtAuthGuard} from "./guard";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { AuthorizingResponse } from "../models/http/response/authorizingResponse";
+import { RegisterRequest } from "../models/http/request/registerRequest";
+import { LoginRequest } from "../models/http/request/loginRequest";
+import { AuthenticatedRequest } from "../models/http/request/authenticatedRequest";
+import { JwtAuthGuard } from "./guard";
 
 @Controller("api/auth")
 export class AuthController {
-	constructor(private readonly authService: AuthService) {
-	}
+	constructor(private readonly authService: AuthService) {}
 
 	@Post("register")
-	async register(@Body() data: RegisterRequest): Promise<AuthorizingResponse> {
+	async register(
+		@Body() data: RegisterRequest,
+	): Promise<AuthorizingResponse> {
 		return this.authService.register(data);
 	}
 
@@ -26,6 +27,6 @@ export class AuthController {
 	async secure(@Req() req: AuthenticatedRequest): Promise<unknown> {
 		return {
 			who: req.user.userName,
-		}
+		};
 	}
 }

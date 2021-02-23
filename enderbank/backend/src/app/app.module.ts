@@ -1,9 +1,9 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {TypegooseModule} from "nestjs-typegoose";
-import {AuthModule} from "../auth/auth.module";
-import {InvoicesModule} from "../invoices/invoices.module";
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { TypegooseModule } from "nestjs-typegoose";
+import { AuthModule } from "../auth/auth.module";
+import { InvoicesModule } from "../invoices/invoices.module";
 
 @Module({
 	imports: [
@@ -16,5 +16,4 @@ import {InvoicesModule} from "../invoices/invoices.module";
 	controllers: [AppController],
 	providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

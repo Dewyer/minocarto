@@ -1,5 +1,5 @@
-import {InvoiceDto} from "../../dto/invoice.dto";
+import { InvoiceDto } from "../../dto/invoice.dto";
 
 export interface CreateInvoiceResponse {
-	invoice: InvoiceDto,
+	invoice: InvoiceDto;
 }
