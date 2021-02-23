@@ -40,7 +40,7 @@ Api = {
         return self.url..path;
     end,
 
-    request = function (self, path, authed, body, isPost=true)
+    request = function (self, path, authed, body, isPost)
         local inp = { url=self:getUrl(path), headers=self:getHeaders(authed) };
         if body then
             inp.body=textutils.serializeJSON(body);
@@ -96,7 +96,7 @@ Api = {
 
         self:saveToken(resp.token);
         return true;
-    end
+    end,
 
     getInvoices = function (self)
         return self:request("api/invoices", true, nil, false);
