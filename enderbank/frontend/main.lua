@@ -99,10 +99,18 @@ function registerFlow()
     end
 end
 
+function loginFlow()
+    print("Unimplemented!");
+end
+
 function unathorizedFlow()
     print("You seem to be logged out.");
     local loginOrRegister = Ui.askQuestion("What to do ?", {"Login", "Register"});
-    print(loginOrRegister);
+    if loginOrRegister == 1 then
+        loginFlow();
+    else
+        registerFlow();
+    end
 end
 
 function main()
