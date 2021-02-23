@@ -23,35 +23,42 @@ Api = {
     url = "http://enderbank.ngrok.io/",
     token = nil,
 
-    getHeaders = function (authed)
+    getHeaders = function (self, authed)
         if authed then
             return {
                 Authorization="Bearer "..self.token,
+                ["Content-Type"]="application/json"
             };
         else
-            return {};
+            return {
+                ["Content-Type"]="application/json"
+            };
         end
     end,
 
-    getUrl = function (path)
+    getUrl = function (self, path)
         return self.url..path;
     end,
 
-    post = function (path, authed, body)
-        local resp = http.post({ url=self.getUrl(), headers=self.getHeaders(authed), body=textutils.serializeJSON(body)});
-        local respJson = textutils.unserializeJSON(resp);
+    post = function (self, path, authed, body)
+        local resp, errorReason = http.post({ url=self:getUrl(path), headers=self:getHeaders(authed), body=textutils.serializeJSON(body)});
+        if errorReason then
+            print("post failed "..errorReason);
+        end
+
+        local respJson = textutils.unserializeJSON(resp.readAll());
 
         return respJson;
     end,
 
-    saveToken = function (tokenData)
+    saveToken = function (self, tokenData)
         local tokFile = fs.open("./token", "w");
         tokFile.write(tokenData);
         self.token = tokenData;
         tokFile.close();
     end,
 
-    loadToken = function ()
+    loadToken = function (self)
         if not fs.exists("./token") then
             return false;
         end
@@ -66,8 +73,8 @@ Api = {
         return true;
     end,
 
-    register = function (username, password)
-        local resp = self.post("api/auth/register", false, {
+    register = function (self, username, password)
+        local resp = self:post("api/auth/register", false, {
             userName=username,
             password=password
         });
@@ -76,7 +83,7 @@ Api = {
             return false;
         end
 
-        self.saveToken(resp.token);
+        self:saveToken(resp.token);
         return true;
     end
 };
@@ -89,7 +96,7 @@ function registerFlow()
     print("- Password:");
     local pwd = read("*");
 
-    local didReg = Api.register(username, pwd);
+    local didReg = Api:register(username, pwd);
     if not didReg then
         print("We couldn't register you, please try again.");
         registerFlow();
