@@ -19,14 +19,14 @@ local Ui = {
     end
 };
 
-local Api = {
+Api = {
     url = "http://enderbank.ngrok.io/",
     token = nil,
 
     getHeaders = function (authed)
         if authed then
             return {
-                Authorization="Bearer "..token,
+                Authorization="Bearer "..self.token,
             };
         else
             return {};
@@ -34,11 +34,11 @@ local Api = {
     end,
 
     getUrl = function (path)
-        return Api.url..path;
+        return self.url..path;
     end,
 
     post = function (path, authed, body)
-        local resp = http.post({ url=Api.getUrl(), headers=Api.getHeaders(authed), body=textutils.serializeJSON(body)});
+        local resp = http.post({ url=self.getUrl(), headers=self.getHeaders(authed), body=textutils.serializeJSON(body)});
         local respJson = textutils.unserializeJSON(resp);
 
         return respJson;
@@ -47,7 +47,7 @@ local Api = {
     saveToken = function (tokenData)
         local tokFile = fs.open("./token", "w");
         tokFile.write(tokenData);
-        Api.token = tokenData;
+        self.token = tokenData;
         tokFile.close();
     end,
 
@@ -62,12 +62,12 @@ local Api = {
         end
         tokFile.close();
 
-        Api.token = token;
+        self.token = token;
         return true;
     end,
 
     register = function (username, password)
-        local resp = Api.post("api/auth/register", false, {
+        local resp = self.post("api/auth/register", false, {
             userName=username,
             password=password
         });
@@ -76,7 +76,7 @@ local Api = {
             return false;
         end
 
-        Api.saveToken(resp.token);
+        self.saveToken(resp.token);
         return true;
     end
 };
