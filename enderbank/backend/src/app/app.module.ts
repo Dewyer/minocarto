@@ -6,7 +6,7 @@ import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
-    TypegooseModule.forRoot("mongodb://localhost:27017/enderbank", {
+    TypegooseModule.forRoot("mongodb://localhost:27019/enderbank", {
       useNewUrlParser: true,
     }),
     AuthModule,

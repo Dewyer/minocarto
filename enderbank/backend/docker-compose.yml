@@ -4,7 +4,7 @@ services:
     image : mongo
     container_name: mongodb
     volumes:
-      - /Users/barna/Documents/mongod:/data/db
+      - C:/Users/Barna/Projects/minocarto/db/mongod:/data/db
     ports:
-      - 27017:27017
+      - 27019:27017
     restart: unless-stopped
