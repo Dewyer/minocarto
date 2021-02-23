@@ -16,6 +16,15 @@ local Ui = {
         until(answer ~= nil)
 
         return answer;
+    end,
+    getNumber = function (question)
+        print("- "..question..":")
+        local nn = tonumber(read());
+        if nn == nil then
+            print("Didn't enter a number.")
+            return;
+        end
+        return nn;
     end
 };
 
@@ -46,7 +55,7 @@ Api = {
             inp.body=textutils.serializeJSON(body);
         end
         local resp, errorReason = nil, nil;
-        if isPost then
+        if isPost == nil or isPost then
             resp, errorReason = http.post(inp);
         else
             resp, errorReason = http.get(inp);
@@ -100,6 +109,12 @@ Api = {
 
     getInvoices = function (self)
         return self:request("api/invoices", true, nil, false);
+    end,
+
+    createInvoice = function (self, am)
+        return self:request("api/invoices/create", true, {
+            amount=am,
+        });
     end
 };
 
@@ -162,6 +177,21 @@ function listInvoices()
     end
 end
 
+function createInvoice()
+    print("Creating new invoice: ");
+    local am = Ui.getNumber("Amount");
+    if am == nil then
+        return;
+    end
+
+    local resp = Api:createInvoice(am);
+    if resp.invoice then
+        print("Invoice created with code:"..resp.invoice.code);
+    else
+        print("Failed to create invoice.");
+    end
+end
+
 function mainOperations()
     print("^^ Welcome back! ^^");
     while true do
@@ -170,6 +200,10 @@ function mainOperations()
         if cmd == 1 then
             listInvoices();
         end
+        if cmd == 2 then
+            createInvoice();
+        end
+
         if cmd == 5 then
             break;
         end
