@@ -80,11 +80,13 @@ export class InvoicesService {
 
 		if (!userWithInvoice || !selectedInvoice) {
 			return {
+				owner: null,
 				invoice: null,
 			};
 		}
 
 		return {
+			owner: userWithInvoice.userName,
 			invoice: Invoice.toDto(selectedInvoice),
 		};
 	}

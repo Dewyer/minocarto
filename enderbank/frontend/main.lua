@@ -117,6 +117,18 @@ Api = {
         });
     end,
 
+    queryInvoice = function (self, code)
+        return self:request("api/invoices/query", true, {
+            invoiceCode=code,
+        });
+    end,
+
+    payInvoice = function (self, code)
+        return self:request("api/invoices/pay", true, {
+            invoiceCode=code,
+        });
+    end,
+
     getMe = function (self)
         return self:request("api/auth/me", true, nil, false);
     end
@@ -202,9 +214,40 @@ function viewBalance()
     if not user then
         print("Failed to get user info");
     end
-    
+
     print("User: "..user.userName);
     print("Balance: "..user.balance.."$");
+end
+
+function payInvoice()
+    print("Paying invoice:");
+    print("- Code:");
+    local code = read();
+    local me = Api:getMe();
+    local qry = Api:queryInvoice(code);
+    if not qry.invoice then
+        print("Invoice with code doesn't exists");
+    end
+    print("===");
+    print("Owner: "..qry.owner);
+    print("Amount: "..qry.invoice.amount.."$");
+    print("Your balance: "..me.balance.."$");
+    if me.balance < qry.invoice.amount then
+        print("You don't have enough money to pay this!");
+        return;
+    end
+
+    local wantsPay = Ui.askQuestion("Do you want to pay this?", {"Yes", "No"});
+    if wantsPay ~= 1 then
+        return;
+    end
+
+    local paid = Api:payInvoice(code);
+    if paid then
+        print("-Invoice paid!");
+    else
+        print("Couldn't pay invoice!");
+    end
 end
 
 function mainOperations()
@@ -218,6 +261,9 @@ function mainOperations()
         end
         if cmd == 2 then
             createInvoice();
+        end
+        if cmd == 3 then
+            payInvoice();
         end
         if cmd == 4 then
             viewBalance();
