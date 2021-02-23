@@ -5,6 +5,7 @@ import { RegisterRequest } from "../models/http/request/registerRequest";
 import { LoginRequest } from "../models/http/request/loginRequest";
 import { AuthenticatedRequest } from "../models/http/request/authenticatedRequest";
 import { JwtAuthGuard } from "./guard";
+import {UserDto} from "../models/dto/user.dto";
 
 @Controller("api/auth")
 export class AuthController {
@@ -22,11 +23,12 @@ export class AuthController {
 		return this.authService.login(data);
 	}
 
-	@Get("secure")
+	@Get("me")
 	@UseGuards(JwtAuthGuard)
-	async secure(@Req() req: AuthenticatedRequest): Promise<unknown> {
+	async me(@Req() req: AuthenticatedRequest): Promise<UserDto> {
 		return {
-			who: req.user.userName,
+			userName: req.user.userName,
+			balance: req.user.balance,
 		};
 	}
 }

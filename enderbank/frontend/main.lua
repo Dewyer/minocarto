@@ -115,6 +115,10 @@ Api = {
         return self:request("api/invoices/create", true, {
             amount=am,
         });
+    end,
+
+    getMe = function (self)
+        return self:request("api/auth/me", true, nil, false);
     end
 };
 
@@ -192,18 +196,32 @@ function createInvoice()
     end
 end
 
+function viewBalance()
+    print("User info:")
+    local user = Api:getMe();
+    if not user then
+        print("Failed to get user info");
+    end
+    
+    print("User: "..user.userName);
+    print("Balance: "..user.balance.."$");
+end
+
 function mainOperations()
     print("^^ Welcome back! ^^");
     while true do
         print("");
         local cmd = Ui.askQuestion(">-", {"List my invoices", "Create an invoice", "Pay an invoice", "Get my balance", "Quit"});
+        term.clear();
         if cmd == 1 then
             listInvoices();
         end
         if cmd == 2 then
             createInvoice();
         end
-
+        if cmd == 4 then
+            viewBalance();
+        end
         if cmd == 5 then
             break;
         end
