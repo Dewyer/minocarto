@@ -12,7 +12,4 @@ export class User {
 
 	@prop({ required: true })
 	passwordHash: string;
-
-	@prop({ required: true })
-	mcId: string;
 }
