@@ -227,6 +227,7 @@ function payInvoice()
     local qry = Api:queryInvoice(code);
     if not qry.invoice then
         print("Invoice with code doesn't exists");
+        return;
     end
     print("===");
     print("Owner: "..qry.owner);
